@@ -23,6 +23,7 @@
     <None Remove="Images\selection-symbol-for-interface-of-a-square-of-broken-line.png" />
     <None Remove="Images\share.png" />
     <None Remove="Tools Images\color-picker.png" />
+    <None Remove="Tools Images\color-wheel.png" />
     <None Remove="Tools Images\eraser.png" />
     <None Remove="Tools Images\font-symbol-of-letter-a.png" />
     <None Remove="Tools Images\icons8-a-48.png" />
@@ -30,16 +31,20 @@
     <None Remove="Tools Images\icons8-fill-color-48.png" />
     <None Remove="Tools Images\icons8-microsoft-copilot-48.png" />
     <None Remove="Tools Images\icons8-shapes-24.png" />
+    <None Remove="Tools Images\icons8-zoom-in-50.png" />
+    <None Remove="Tools Images\icons8-zoom-out-50.png" />
     <None Remove="Tools Images\layers.png" />
     <None Remove="Tools Images\paint-brush.png" />
     <None Remove="Tools Images\paint-bucket.png" />
     <None Remove="Tools Images\pencil.png" />
+    <None Remove="Tools Images\rgb-color-wheel-spectrum-selector-picker-vector-44766143-removebg-preview.png" />
     <None Remove="Tools Images\shapes.png" />
     <None Remove="Tools Images\zoom.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Tools Images\color-picker.png" />
+    <Resource Include="Tools Images\color-wheel.png" />
     <Resource Include="Tools Images\eraser.png" />
     <Resource Include="Tools Images\font-symbol-of-letter-a.png" />
     <Resource Include="Tools Images\icons8-a-48.png" />
@@ -63,10 +68,13 @@
     <Resource Include="Tools Images\icons8-fill-color-48.png" />
     <Resource Include="Tools Images\icons8-microsoft-copilot-48.png" />
     <Resource Include="Tools Images\icons8-shapes-24.png" />
+    <Resource Include="Tools Images\icons8-zoom-in-50.png" />
+    <Resource Include="Tools Images\icons8-zoom-out-50.png" />
     <Resource Include="Tools Images\layers.png" />
     <Resource Include="Tools Images\paint-brush.png" />
     <Resource Include="Tools Images\paint-bucket.png" />
     <Resource Include="Tools Images\pencil.png" />
+    <Resource Include="Tools Images\rgb-color-wheel-spectrum-selector-picker-vector-44766143-removebg-preview.png" />
     <Resource Include="Tools Images\shapes.png" />
     <Resource Include="Tools Images\zoom.png" />
   </ItemGroup>

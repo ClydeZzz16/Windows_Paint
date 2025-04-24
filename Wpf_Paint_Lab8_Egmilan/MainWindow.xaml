@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wpf_Paint_Lab8_Egmilan"
         mc:Ignorable="d"
-        Title="Paint" Height="648" Width="1152"
+        Title="Paint" Height="648" Width="1162"
         Background="#f1f3f9"
         Icon= "/Images/icons8-microsoft-paint-32.ico">
 
@@ -21,7 +21,7 @@
                         StrokeThickness="1" />
                             <Image 
                         Source="{TemplateBinding Content}" 
-                        Width="30" Height="30" 
+                        Width="28" Height="28" 
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Center" />
                         </Grid>
@@ -29,7 +29,29 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="SmallCircleButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse 
+                Fill="{TemplateBinding Tag}" 
+                Stroke="Gray" 
+                StrokeThickness="1" />
+                            <Image 
+                Source="{TemplateBinding Content}" 
+                Width="28" Height="28" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
+
+
     <!-- Usage -->
     <!-- Make sure to handle Click event -->
 
@@ -48,18 +70,15 @@
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="190"/>
             <ColumnDefinition Width="190"/>
+            <ColumnDefinition Width="70"/>
             <ColumnDefinition Width="80"/>
-            <ColumnDefinition Width="80"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="372"/>
+            <ColumnDefinition Width="70"/>
             <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
-        <Rectangle Grid.ColumnSpan="8" Fill="#f8f9fc" HorizontalAlignment="Stretch" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Stretch"/>
+        <Rectangle Grid.ColumnSpan="8" Fill="#f8f9fc" Height="110" Grid.Row="1" Stroke="#f1f3f9" Margin="0,0,-376,0"/>
 
         <InkCanvas x:Name="Canvas" Background="#f8f9fc" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="6" Margin="72,5,72,0" />
-
-        <ScrollBar Grid.Column="7" HorizontalAlignment="Left" Height="442" Margin="118,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="26"/>
-
         <Button Content="File" HorizontalAlignment="Left" Height="40" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" FontSize="16"/>
         <Button Content="Edit" HorizontalAlignment="Left" Height="40" Margin="60,0,0,0" VerticalAlignment="Center" Width="50" Grid.ColumnSpan="2" BorderThickness="0" Background="#f1f3f9" FontSize="16"/>
         <Button Content="View" HorizontalAlignment="Left" Height="40" Margin="20,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" Click="Button_Click" FontSize="16"/>
@@ -163,14 +182,106 @@
 
         <!--Colors Column-->
         <Rectangle Grid.Column="5" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2"/>
-        <TextBlock Grid.Column="5" HorizontalAlignment="Center" Height="21" Margin="0,88,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Colors" VerticalAlignment="Top" Width="35"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Black}" Height="32" Width="31" Click="Button_Click_2"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,53,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="32" Width="31" Click="Button_Click_2"/>
+        <TextBlock Grid.Column="5" HorizontalAlignment="Left" Height="21" Margin="156,88,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Colors" VerticalAlignment="Top" Width="36"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Black}" Height="32" Width="31"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,55,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="32" Width="31"/>
+        <!--Small color Buttons-->
+        <!-- <WrapPanel Grid.Column="5"  Grid.Row="1" Margin="55,10,55,25" HorizontalAlignment="Stretch" ItemHeight="18" ItemWidth="18">
+            <Button Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}"/>
+            <Button VerticalAlignment="Center" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" HorizontalAlignment="Right" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
 
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+            <Button Grid.Column="5" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Margin="341,42,0,0" Grid.Row="1"  VerticalAlignment="Top" Height="32" Width="32">
+                <Image Source="/Tools Images/color-wheel.png"/>
+            </Button>
+        </WrapPanel>-->
         <!--Panel.ZIndex="10"-->
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Black}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
 
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Gray}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightGray}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.DarkRed}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Brown}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Red}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightPink}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Orange}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Gold}" Height="18" Width="18"/>
+
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Yellow}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightYellow}" Height="18" Width="18"/>
+
+
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Green}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Lime}" Height="18" Width="18"/>
+
+
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Turquoise}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightCyan}" Height="18" Width="18"/>
+
+
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Indigo}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightSlateGray }" Height="18" Width="18"/>
+
+
+
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Purple}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Lavender}" Height="18" Width="18"/>
+
+
+
+        <Button Grid.Column="5" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Margin="330,0,0,0" Grid.Row="1"  VerticalAlignment="Center" Height="36" Width="36">
+            <Image Source="/Tools Images/rgb-color-wheel-spectrum-selector-picker-vector-44766143-removebg-preview.png" Height="36" Width="36"/>
+        </Button>
 
         <!--Copilot Column-->
+
         <Button Grid.Column="6" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Center" Height="42" Grid.Row="1" VerticalAlignment="Top" Width="32" Margin="0,16,0,0">
             <Image Source="/Tools Images/icons8-microsoft-copilot-48.png" />
         </Button>
@@ -178,6 +289,7 @@
             <Image Source="/Images/arrow-down-sign-to-navigate.png" />
         </Button>
         <TextBlock Grid.Column="6" HorizontalAlignment="Center" Height="15" Margin="0,87,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Copilot" VerticalAlignment="Top" Width="44"/>
+        <Rectangle Grid.Column="5" HorizontalAlignment="Left" Height="110" Stroke="#f1f3f9" VerticalAlignment="Top" Width="2" Margin="371,38,0,0" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
 
 
 
@@ -186,6 +298,14 @@
             <Image Source="/Tools Images/layers.png"/>
         </Button>
         <TextBlock Grid.Column="7" HorizontalAlignment="Center" Height="22" Margin="0,85,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Layers" VerticalAlignment="Top" Width="36"/>
+        <Rectangle Grid.Column="7" HorizontalAlignment="Left" Height="110" Stroke="#f1f3f9" VerticalAlignment="Top" Width="2" Margin="0,37,0,0" Grid.RowSpan="2"/>
+        <Slider Grid.Column="5" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="290,10,0,0" Grid.Row="3" VerticalAlignment="Top" Width="192"/>
+        <Button Grid.Column="7" BorderThickness="0" Background="#f1f3f9" HorizontalAlignment="Left" Height="30" Margin="45,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="28">
+            <Image Source="/Tools Images/icons8-zoom-in-50.png"/>
+        </Button>
+        <Button Grid.Column="5" BorderThickness="0" Background="#f1f3f9" HorizontalAlignment="Left" Height="30" Margin="252,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="26">
+            <Image Source="/Tools Images/icons8-zoom-out-50.png"/>
+        </Button>
 
 
 

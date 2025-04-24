@@ -21,10 +21,7 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
+    
 
     private void Button_Click_1(object sender, RoutedEventArgs e)
     {
@@ -39,5 +36,10 @@ public partial class MainWindow : Window
     private void Button_Click_2(object sender, RoutedEventArgs e)
     {
 
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        MessageBox.Show("Circle button clicked!");
     }
 }
