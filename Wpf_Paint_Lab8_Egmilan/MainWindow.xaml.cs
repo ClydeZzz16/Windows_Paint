@@ -42,4 +42,33 @@ public partial class MainWindow : Window
     {
         MessageBox.Show("Circle button clicked!");
     }
+
+    private void CutMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void MenuItem_MouseEnter(object sender, MouseEventArgs e)
+    {
+        if (sender is Button button)
+        {
+            button.Background = Brushes.LightBlue;  
+            button.Foreground = Brushes.Black;    
+            button.Cursor = Cursors.Hand;        
+        }
+    }
+
+    private void MenuItem_MouseLeave(object sender, MouseEventArgs e)
+    {
+        if (sender is Button button)
+        {
+            button.Background = Brushes.Transparent;      
+            button.Cursor = Cursors.Arrow;          
+        }
+    }
+
+    private void EditButton_Click(object sender, RoutedEventArgs e)
+    {
+        EditPopup.IsOpen = !EditPopup.IsOpen;
+    }
 }
