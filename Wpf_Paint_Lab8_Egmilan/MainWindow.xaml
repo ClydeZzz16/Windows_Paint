@@ -11,27 +11,20 @@
 
     <Window.Resources>
         <Style x:Key="CircleButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <Ellipse x:Name="Circle" 
-                            Width="{TemplateBinding Width}" 
-                            Height="{TemplateBinding Height}"
-                            Fill="{TemplateBinding Tag}"
-                                HorizontalAlignment="Center"
-                            VerticalAlignment="Center"/>
+                            <Ellipse 
+                        Fill="{TemplateBinding Tag}" 
+                        Stroke="Gray" 
+                        StrokeThickness="1" />
+                            <Image 
+                        Source="{TemplateBinding Content}" 
+                        Width="30" Height="30" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" />
                         </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Circle" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Circle" Property="Opacity" Value="0.6"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -59,7 +52,7 @@
             <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="80"/>
-            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
         <Rectangle Grid.ColumnSpan="8" Fill="#f8f9fc" HorizontalAlignment="Stretch" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Stretch"/>
 
@@ -171,8 +164,10 @@
         <!--Colors Column-->
         <Rectangle Grid.Column="5" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2"/>
         <TextBlock Grid.Column="5" HorizontalAlignment="Center" Height="21" Margin="0,88,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Colors" VerticalAlignment="Top" Width="35"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="19,16,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="Black" Height="37" Width="38"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Black}" Height="32" Width="31" Click="Button_Click_2"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,53,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="32" Width="31" Click="Button_Click_2"/>
 
+        <!--Panel.ZIndex="10"-->
 
 
         <!--Copilot Column-->
