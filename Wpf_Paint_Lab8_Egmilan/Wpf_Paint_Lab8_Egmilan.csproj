@@ -12,11 +12,14 @@
     <None Remove="Images\47182-08fba5488a362df6a81736262bb706a5-removebg-preview.png" />
     <None Remove="Images\arrow-down-sign-to-navigate.png" />
     <None Remove="Images\arrow.png" />
+    <None Remove="Images\copy-icon.png" />
+    <None Remove="Images\cut-icon.png" />
     <None Remove="Images\icons8-background-remover-48.png" />
     <None Remove="Images\icons8-crop-48.png" />
     <None Remove="Images\icons8-flip-48.png" />
     <None Remove="Images\icons8-microsoft-paint-32.ico" />
     <None Remove="Images\icons8-selection-67.png" />
+    <None Remove="Images\paste-icon.png" />
     <None Remove="Images\redoArrow.PNG" />
     <None Remove="Images\resize.png" />
     <None Remove="Images\saveas_5165.png" />
@@ -43,6 +46,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\copy-icon.png" />
+    <Resource Include="Images\cut-icon.png" />
+    <Resource Include="Images\paste-icon.png" />
     <Resource Include="Tools Images\color-picker.png" />
     <Resource Include="Tools Images\color-wheel.png" />
     <Resource Include="Tools Images\eraser.png" />
