@@ -10,6 +10,7 @@ A fully-functional and modern remake of Microsoft Paint built with WPF (Windows 
 - 🧼 **Eraser Tool** – Remove strokes with precision
 - 📐 **Shape Tools** – Draw lines, rectangles, ellipses, and more
 - ↩️ **Undo / Redo** – Step backward or forward in your drawing history
+- 🖼️ **Import Image** – Load external images directly onto the canvas
 - 🔍 **Zoom In / Zoom Out** – Pinch or button controls to zoom the canvas
 - 💾 **Save to PNG** – Export your canvas to an image file
 - 🎨 **Top Color Preview** – Always shows your current selected color
