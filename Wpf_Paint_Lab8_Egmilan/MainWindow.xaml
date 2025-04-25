@@ -7,8 +7,9 @@
         mc:Ignorable="d"
         Title="Paint" Height="648" Width="1162"
         Background="#f1f3f9"
-        Icon= "/Images/icons8-microsoft-paint-32.ico">
-
+        Icon= "/Images/icons8-microsoft-paint-32.ico"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+    <!--MaxHeight="648" MaxWidth="1162"-->
     <Window.Resources>
         <Style x:Key="CircleButtonStyle" TargetType="Button">
             <Setter Property="Template">
@@ -16,14 +17,10 @@
                     <ControlTemplate TargetType="Button">
                         <Grid>
                             <Ellipse 
-                        Fill="{TemplateBinding Tag}" 
+                        Fill="{Binding Tag, RelativeSource={RelativeSource AncestorType=Button}}" 
                         Stroke="Gray" 
-                        StrokeThickness="1" />
-                            <Image 
-                        Source="{TemplateBinding Content}" 
-                        Width="28" Height="28" 
-                        HorizontalAlignment="Center" 
-                        VerticalAlignment="Center" />
+                        StrokeThickness="1"
+                        IsHitTestVisible="False"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -49,6 +46,31 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ColoredSliderStyle" TargetType="Slider">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <Track x:Name="PART_Track"
+                               VerticalAlignment="Center">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Background="#3b82f6" />
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Background="#e5e7eb" />
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Background="#3b82f6" Width="14" Height="14" BorderThickness="0"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
     </Window.Resources>
 
 
@@ -74,12 +96,263 @@
             <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="372"/>
             <ColumnDefinition Width="70"/>
-            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Rectangle Grid.ColumnSpan="8" Fill="#f8f9fc" Height="110" Grid.Row="1" Stroke="#f1f3f9" Margin="0,0,-376,0"/>
 
-        <InkCanvas x:Name="Canvas" Background="#f8f9fc" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="6" Margin="72,5,72,0" />
-        <Button Content="File" HorizontalAlignment="Left" Height="40" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" FontSize="16"/>
+        <!-- Zoom Controls -->
+        <!-- Zoom Controls -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" Margin="67,10,0,10" Grid.ColumnSpan="4" Grid.Column="1">
+            <Button BorderThickness="0" Background="#f1f3f9"  Width="30" Margin="0" Click="ZoomOut_Click" Height="25">
+                <Image Source="/Tools Images/icons8-zoom-out-50.png"/>
+            </Button>
+
+            <Slider x:Name="ZoomSlider" 
+                    Width="300" 
+                    Minimum="25" 
+                    Maximum="400" 
+                    Value="100" 
+                    Margin="0"
+                    ValueChanged="ZoomSlider_ValueChanged"/>
+
+            <Button Width="30" Height="25" BorderThickness="0" Background="#f1f3f9" Margin="0" Click="ZoomIn_Click">
+                <Image Source="/Tools Images/icons8-zoom-in-50.png"/>
+            </Button>
+
+            <TextBlock x:Name="ZoomValueText" 
+                     Text="100%" 
+                     VerticalAlignment="Center" 
+                     Margin="5" 
+                     Width="50"/>
+        </StackPanel>
+
+        <!-- Zoomable InkCanvas Area -->
+        <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="7" 
+                     x:Name="ScrollViewer" 
+                     HorizontalScrollBarVisibility="Auto" 
+                     VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="ZoomContainer">
+                <Grid.LayoutTransform>
+                    <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1"/>
+                </Grid.LayoutTransform>
+
+                <InkCanvas x:Name="Canvas" Background="#f8f9fc" Margin="72,5,200,0" EditingMode="Ink" 
+                           SizeChanged="Canvas_SizeChanged"  MouseLeftButtonDown="Canvas_MouseLeftButtonDown3" MouseDown="DrawingCanvas_MouseDown"
+                   MouseMove="DrawingCanvas_MouseMove"
+                   MouseUp="DrawingCanvas_MouseUp">
+                    <InkCanvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="FlipTransform" ScaleX="1" ScaleY="1"/>
+                            <RotateTransform x:Name="RotateTransform" Angle="0" CenterX="0.5" CenterY="0.5"/>
+                        </TransformGroup>
+                    </InkCanvas.RenderTransform>
+                </InkCanvas>
+                <Image x:Name="CanvasBackgroundImage" Stretch="Uniform" IsHitTestVisible="False"/>
+                <!--<InkCanvas x:Name="Canvas" 
+                          Background="#f8f9fc"
+                          EditingMode="Ink"/>-->
+            </Grid>
+        </ScrollViewer>
+
+        <Rectangle Grid.ColumnSpan="8" Fill="#f8f9fc" Height="110" Grid.Row="1" Stroke="#f1f3f9"/>
+
+        <!--<InkCanvas x:Name="Canvas" Background="#f8f9fc" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="7" Margin="72,5,200,0" />-->
+        <Button x:Name="File1" Content="File" HorizontalAlignment="Left" Height="40" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" FontSize="16" Click="FilePopup_Click"/>
+
+        <Popup x:Name="FilePopup" PlacementTarget="{Binding ElementName=File1}" Width="200" Height="250" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- New -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="NewFileButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="60"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="NewIcon" Source="/Tools Images/icons8-new-file-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="New" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="Ctrl+N" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Open -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="OpenButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="OpenIcon" Source="/Tools Images/folder.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Open" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="Ctrl+O" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Import to canvas -->
+                    <Button x:Name="ImportImageBtn" Click="ImportImageBtn_Click" Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="150" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="ImportIcon" Source="/Images/resize.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Import to canvas" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Recent
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="RecentIcon" Source="/Images/copy-icon.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Recent" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>-->
+
+                    <!-- Save -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="SaveButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="SaveIcon" Source="/Images/saveas_5165.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Save" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="Ctrl+S" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Save as -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="SaveButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="SaveASIcon" Source="/Tools Images/icons8-save-as-50.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Save as" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Exit -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="ExitButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="ExitIcon" Source="/Tools Images/icons8-exit-50.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Exit" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                        <TextBlock Text="" Grid.Column="2" Foreground="LightGray" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                </StackPanel>
+            </Border>
+        </Popup>
+
+
+
         <Button x:Name="EditButton" Content="Edit" HorizontalAlignment="Left" Height="40" Margin="60,0,0,0" VerticalAlignment="Center" Width="50" Grid.ColumnSpan="2" BorderThickness="0" Background="#f1f3f9" FontSize="16" Click="EditButton_Click"/>
         <Popup x:Name="EditPopup" PlacementTarget="{Binding ElementName=EditButton}" Width="140" Height="125" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
             <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
@@ -103,7 +376,7 @@
                                     </Grid>
                                 </Border>
                                 <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger Property="IsMouseOver" Value="True">
                                         <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
@@ -165,204 +438,735 @@
                 </StackPanel>
             </Border>
         </Popup>
-        <Button Content="View" HorizontalAlignment="Left" Height="40" Margin="20,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" Click="Button_Click" FontSize="16"/>
-        <Button x:Name="SaveButton" HorizontalAlignment="Left" Height="40" Margin="80,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" Click="Button_Click" FontSize="16">
+        <Button x:Name="View" Content="View" HorizontalAlignment="Left" Height="40" Margin="20,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" FontSize="16" Click="ViewPopup_Click"/>
+
+        <Popup x:Name="ViewPopup" PlacementTarget="{Binding ElementName=View}" Width="200" Height="85" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- Zoom in -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="ZoomIn_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="ZoomIn" Source="/Tools Images/icons8-zoom-in-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Zoom in" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Zoom out -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="ZoomOut_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="ZoomOut" Source="/Tools Images/icons8-zoom-out-50.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Zoom out" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+
+        <Button x:Name="SaveButton" HorizontalAlignment="Left" Height="40" Margin="80,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" Click="SaveButton_Click" FontSize="16">
             <Image Source="/Images/saveas_5165.png" Height="20" Width="23"/>
         </Button>
-        <Button x:Name="ShareButton" Panel.ZIndex="10" HorizontalAlignment="Left" Height="40" Margin="140,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" Click="Button_Click" Grid.ColumnSpan="2">
+        <Button x:Name="ShareButton" Panel.ZIndex="10" HorizontalAlignment="Left" Height="40" Margin="140,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="1" Click="ShareButton_Click" Grid.ColumnSpan="2">
             <Image Source="/Images/share.png" Height="20" Width="25" />
         </Button>
 
-        <Button x:Name="UndoButton"  HorizontalAlignment="Left" Height="40" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="2" Click="Button_Click">
+        <Button x:Name="UndoButton"  HorizontalAlignment="Left" Height="40" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="2" Click="Undo_Click" >
             <Image Source="/Images/arrow.png" Height="24" Width="20"/>
         </Button>
-        <Button x:Name="RedoButton" HorizontalAlignment="Left" Height="40" Margin="55,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="2" Click="Button_Click">
+        <Button x:Name="RedoButton" HorizontalAlignment="Left" Height="40" Margin="55,0,0,0" VerticalAlignment="Center" Width="50" BorderThickness="0" Background="#f1f3f9" Grid.Column="2" Click="Redo_Click" >
             <Image Source="/Images/redoArrow.PNG" Height="28" Width="20" />
         </Button>
 
         <!--Selection Column-->
-        <Button  HorizontalAlignment="Center" Panel.ZIndex="10" Height="39" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="40" Background="#f8f9fc" BorderThickness="0">
+        <Button x:Name="SelectToolButton" HorizontalAlignment="Center" Panel.ZIndex="10" Height="39" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="40" Background="#f8f9fc" BorderThickness="0" Click="RectangleSelectButton2_Click">
             <Image Source="/Images/selection-symbol-for-interface-of-a-square-of-broken-line.png" Width="27"/>
         </Button>
         <TextBlock Height="17" Panel.ZIndex="10" Margin="25,87,25,0" Grid.Row="1" TextWrapping="Wrap" Text="Selection" VerticalAlignment="Top"/>
-        <Button Panel.ZIndex="10" Background="#f8f9fc" BorderThickness="0" Height="18" Grid.Row="1" Width="40" Margin="30,55,30,37">
+        <!--<Button Panel.ZIndex="10" Background="#f8f9fc" BorderThickness="0" Height="18" Grid.Row="1" Width="40" Margin="30,55,30,37">
             <Image Source="/Images/arrow-down-sign-to-navigate.png" Height="18" Width="12"/>
+        </Button>-->
+
+        <!--<Button x:Name="DropdownButton"
+        Panel.ZIndex="10"
+        Background="Transparent"
+        BorderBrush="Transparent"
+        Cursor="Hand"
+        Width="40"
+        Height="32"
+        Margin="30,53,30,25"
+        ToolTip="More options"
+        Click="DropdownButton_Click" Grid.Row="1">
+            <Image Source="/Images/arrow-down-sign-to-navigate.png" Height="16" Width="16"/>
+
+            <Button.ContextMenu>
+                <ContextMenu x:Name="DropdownMenu">
+                    <MenuItem Header="Rectangle" Click="RectangleSelectButton_Click"/>
+                    <MenuItem Header="Free-form" Click="FreeFormSelectButton_Click"/>
+                    <MenuItem Header="Select All" Click="Menu_SelectArea_Click"/>
+                    <MenuItem Header="Delete" Click="Menu_Delete_Click"/>
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>-->
+        <Button x:Name="DropdownButton"
+            Panel.ZIndex="10"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            Cursor="Hand"
+            Width="32"
+            Height="16"
+            Margin="30,50,30,28" Grid.Row="1"
+            Click="SelectionButton_Click">
+            <Image Source="/Images/arrow-down-sign-to-navigate.png"/>
         </Button>
+        <Popup x:Name="SelectionPopup" 
+       PlacementTarget="{Binding ElementName=DropdownButton}" 
+       Width="140" 
+       Height="165" 
+       Placement="Bottom" 
+       StaysOpen="False" 
+       AllowsTransparency="True">
+            <Border Background="White" 
+            BorderBrush="#FFE0E0E0" 
+            BorderThickness="1" 
+            CornerRadius="10">
+                <StackPanel>
+                    <!-- Rectangle Select -->
+                    <Button Background="Transparent" 
+                    BorderBrush="#FFE0E0E0" 
+                    BorderThickness="1" 
+                    Height="41" 
+                    Width="130" 
+                    MouseEnter="MenuItem_MouseEnter" 
+                    MouseLeave="MenuItem_MouseLeave" 
+                    Padding="10"
+                    Click="RectangleSelectButton2_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="/Images/selection-symbol-for-interface-of-a-square-of-broken-line.png"
+                                       HorizontalAlignment="Center" 
+                                       Height="18"/>
+                                        <TextBlock Text="Rectangle" 
+                                           Grid.Column="1" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Left" 
+                                           Margin="5,0,0,0" 
+                                           FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Free-form Select -->
+                    <Button Background="Transparent" 
+                    BorderBrush="#FFE0E0E0" 
+                    BorderThickness="1" 
+                    Height="41" 
+                    Width="130" 
+                    MouseEnter="MenuItem_MouseEnter" 
+                    MouseLeave="MenuItem_MouseLeave" 
+                    Padding="10"
+                    Click="FreeFormSelectButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="/Images/select.png" 
+                                       HorizontalAlignment="Center" 
+                                       Height="18"/>
+                                        <TextBlock Text="Free-form" 
+                                           Grid.Column="1" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Left" 
+                                           Margin="5,0,0,0" 
+                                           FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Select All -->
+                    <Button Background="Transparent" 
+                    BorderBrush="#FFE0E0E0" 
+                    BorderThickness="1" 
+                    Height="41" 
+                    Width="130" 
+                    MouseEnter="MenuItem_MouseEnter" 
+                    MouseLeave="MenuItem_MouseLeave" 
+                    Padding="10"
+                    Click="Menu_SelectArea_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="/Images/tool.png" 
+                                       HorizontalAlignment="Center" 
+                                       Height="18"/>
+                                        <TextBlock Text="Select All" 
+                                           Grid.Column="1" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Left" 
+                                           Margin="5,0,0,0" 
+                                           FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Delete -->
+                    <Button Background="Transparent" 
+                    BorderBrush="#FFE0E0E0" 
+                    BorderThickness="1" 
+                    Height="41" 
+                    Width="130" 
+                    MouseEnter="MenuItem_MouseEnter" 
+                    MouseLeave="MenuItem_MouseLeave" 
+                    Padding="10"
+                    Click="Menu_Delete_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="/Images/bin.png"
+                                       HorizontalAlignment="Center" 
+                                       Height="18"/>
+                                        <TextBlock Text="Delete" 
+                                           Grid.Column="1" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Left" 
+                                           Margin="5,0,0,0" 
+                                           FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+
 
         <!--Image Column-->
         <Rectangle Grid.Column="1" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2"/>
-        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="15,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="23">
+        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="15,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="23" Click="CropButton_Click">
             <Image Source="/Images/icons8-crop-48.png" />
         </Button>
         <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="15,51,0,0" Grid.Row="1" VerticalAlignment="Top" Width="23">
             <Image Source="/Images/icons8-background-remover-48.png" Height="25" Width="23" />
         </Button>
-        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="34" Margin="130,36,0,0" Grid.Row="1" VerticalAlignment="Top" Width="40" RenderTransformOrigin="0.347,0.591">
+        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="34" Margin="130,36,0,0" Grid.Row="1" VerticalAlignment="Top" Width="40" RenderTransformOrigin="0.347,0.591" Click="ImportImageBtn_Click">
             <Image Source="/Images/resize.png" HorizontalAlignment="Center" Height="35" Width="30"/>
         </Button>
         <TextBlock Grid.Column="1"  Height="17" Margin="78,87,78,0" Grid.Row="1" TextWrapping="Wrap" Text="Image" VerticalAlignment="Top"/>
-        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="66,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="29">
+        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="66,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="29" Click="RotatePopup_Click">
             <Image Source="/Images/47182-08fba5488a362df6a81736262bb706a5-removebg-preview.png" Height="25" Width="26" />
         </Button>
-        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="65,51,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30">
+        <Button x:Name="Rotate" Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="95,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="20" Click="RotatePopup_Click">
+            <Image Source="/Images/arrow-down-sign-to-navigate.png" Height="10" Width="10"/>
+        </Button>
+
+        <Popup x:Name="RotatePopup" PlacementTarget="{Binding ElementName=Rotate}" Width="200" Height="125" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- Rotate Right 90 -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="RotateRight90_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="RotateRight" Source="/Tools Images/icons8-rotate-right-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Rotate Right 90" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Rotate Left 90 -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="RotateLeft90_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="RotateLeft" Source="/Tools Images/icons8-rotate-left-50.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Rotate Left 90" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Rotate 180 -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="Rotate180_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Rotate180" Source="/Tools Images/icons8-rotate-180-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Rotate 180" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+
+
+        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="65,51,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="FlipPopup_Click">
             <Image Source="/Images/icons8-flip-48.png" Height="25" Width="28" />
 
         </Button>
-        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="95,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="20">
+
+
+        <Button x:Name="Flip" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="24" Margin="95,53,0,0" Grid.Row="1" VerticalAlignment="Top" Width="20" Grid.Column="1" Click="FlipPopup_Click">
             <Image Source="/Images/arrow-down-sign-to-navigate.png" Height="10" Width="10"/>
         </Button>
 
-        <Button Grid.Column="1" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="24" Margin="95,53,0,0" Grid.Row="1" VerticalAlignment="Top" Width="20">
-            <Image Source="/Images/arrow-down-sign-to-navigate.png" Height="10" Width="10"/>
-        </Button>
+        <Popup x:Name="FlipPopup" PlacementTarget="{Binding ElementName=Flip}" Width="200" Height="85" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- Flip Vertical -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click= "FlipVertical_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="FlipVertical" Source="/Tools Images/icons8-flip-vertical-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Flip Vertical" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Flip Horizontal -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="FlipHorizontal_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="FlipHorizontal" Source="/Tools Images/icons8-flip-horizontal-50.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Flip Horizontal" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
         <!--<Border BorderBrush="#f1f3f9" BorderThickness="2" HorizontalAlignment="Center" Height="110" Grid.Row="1" VerticalAlignment="Center" Width="100"/>-->
 
         <!--Tools Column-->
         <Rectangle Grid.Column="2" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2"/>
         <TextBlock Grid.Column="2" HorizontalAlignment="Center" Height="17" Margin="0,87,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Tools" VerticalAlignment="Top" Width="30"/>
-        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="16,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30">
+        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="16,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="onOpenClicked">
             <Image Source="/Tools Images/pencil.png" />
         </Button>
-        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="16,53,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30">
+        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="16,53,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="onEraserClicked">
             <Image Source="/Tools Images/eraser.png" />
         </Button>
 
-        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Center" Height="26" Margin="0,55,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="Button_Click_1">
+        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Center" Height="26" Margin="0,55,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="EnableColorPicker_Click">
             <Image Source="/Tools Images/color-picker.png" />
         </Button>
 
-        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Center" Height="26" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="Button_Click_1">
+        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Center" Height="26" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30"  Click="PaintBucket_Click">
             <Image Source="/Tools Images/paint-bucket.png" />
         </Button>
 
-        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="143,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="Button_Click_1">
+        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="143,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30">
             <Image Source="/Tools Images/font-symbol-of-letter-a.png" />
         </Button>
 
-        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="143,55,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="Button_Click_1">
+        <Button Grid.Column="2" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="26" Margin="143,55,0,0" Grid.Row="1" VerticalAlignment="Top" Width="30" Click="onOpenClicked">
             <Image Source="/Tools Images/zoom.png" />
         </Button>
 
         <Rectangle Grid.Column="2" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2" Margin="188,0,0,0"/>
 
         <!--Brushes column-->
-        <Button Grid.Column="3" Panel.ZIndex="10" Background="#f8f9fc" HorizontalAlignment="Center" Height="42" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32">
+        <Button Grid.Column="3" Panel.ZIndex="10" Background="#f8f9fc" HorizontalAlignment="Center" Height="42" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32" Click="onOpenClicked">
             <Image Source="/Tools Images/icons8-brush-48.png" />
         </Button>
-        <TextBox Grid.Column="3" BorderThickness="0" HorizontalAlignment="Center" Height="17" Margin="0,87,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Brushes" VerticalAlignment="Top" Width="48" TextChanged="TextBox_TextChanged"/>
-        <Button Grid.Column="3" Background="#f8f9fc" HorizontalAlignment="Center" Height="16" Margin="0,58,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32">
+        <TextBox Grid.Column="3" BorderThickness="0" HorizontalAlignment="Center" Height="17" Margin="0,87,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Brushes" VerticalAlignment="Top" Width="48"/>
+        <Button x:Name="brush" Grid.Column="3" Background="#f8f9fc" HorizontalAlignment="Center" Height="16" Margin="0,58,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32" Click="BrushPopup_Click">
             <Image Source="/Images/arrow-down-sign-to-navigate.png" />
         </Button>
+
+        <Popup x:Name="BrushPopup" PlacementTarget="{Binding ElementName=brush}" Width="200" Height="85" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- Brush -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="onOpenClicked">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Brush" Source="/Images/icons8-brush-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Brush" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    
+                    <!-- Crayon -->
+                    <Button x:Name="HighlighterButton" Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="HighlighterButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Crayon" Source="/Images/icons8-crayon-48.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Crayon" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
 
         <!--Shapes Column-->
         <Rectangle Grid.Column="4" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2"/>
         <Button Grid.Column="4" BorderThickness="0" Background="#f8f9fc"  HorizontalAlignment="Center" Height="42" Margin="0,16,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32">
             <Image Source="/Tools Images/shapes.png"/>
         </Button>
-        <Button Grid.Column="4" Background="#f8f9fc" BorderThickness="0" HorizontalAlignment="Center" Height="16" Margin="0,58,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32">
+        <Button Grid.Column="4" Background="#f8f9fc" BorderThickness="0" HorizontalAlignment="Center" Height="16" Margin="0,58,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32" Click="ShapePopup_Click">
             <Image Source="/Images/arrow-down-sign-to-navigate.png" />
         </Button>
         <TextBlock Grid.Column="4" HorizontalAlignment="Center" Height="19" Margin="0,88,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Shapes" VerticalAlignment="Top" Width="40"/>
 
+        <Popup x:Name="ShapePopup" PlacementTarget="{Binding ElementName=brush}" Width="200" Height="165" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+            <Border Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1" CornerRadius="10">
+                <StackPanel>
+                    <!-- Square -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="SquareButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Square" Source="/Images/icons8-square-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Square" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Rectangle -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="RectangleButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Rectangle" Source="/Images/icons8-rectangle-96.png" HorizontalAlignment="Center" Height="15"/>
+                                        <TextBlock Text="Rectangle" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Circle -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="CircleButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Circle" Source="/Images/icons8-circle-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Circle" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <!-- Line -->
+                    <Button Background="Transparent" BorderBrush="#FFE0E0E0" BorderThickness="1" Height="41" Width="130" MouseEnter="MenuItem_MouseEnter" MouseLeave="MenuItem_MouseLeave" Padding="10" Click="LineButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Name="RootBorder" Background="Transparent" Width="150">
+                                    <Grid>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image x:Name="Line" Source="/Images/icons8-line-50.png" HorizontalAlignment="Center" Height="18"/>
+                                        <TextBlock Text="Line" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" FontSize="15"/>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="RootBorder" Property="Background" Value="#2539B0FF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Popup>
+
         <!--Colors Column-->
         <Rectangle Grid.Column="5" HorizontalAlignment="Left" Height="110" Grid.Row="1" Stroke="#f1f3f9" VerticalAlignment="Center" Width="2"/>
         <TextBlock Grid.Column="5" HorizontalAlignment="Left" Height="21" Margin="156,88,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Colors" VerticalAlignment="Top" Width="36"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Black}" Height="32" Width="31"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="10,55,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="32" Width="31"/>
-        <!--Small color Buttons-->
-        <!-- <WrapPanel Grid.Column="5"  Grid.Row="1" Margin="55,10,55,25" HorizontalAlignment="Stretch" ItemHeight="18" ItemWidth="18">
-            <Button Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}"/>
-            <Button VerticalAlignment="Center" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" HorizontalAlignment="Right" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button x:Name="TopColorButton" Grid.Column="5" HorizontalAlignment="Left" Margin="10,32,0,0" Grid.Row="1"  VerticalAlignment="Top" Background="Black" BorderBrush="Gray" Height="32" Width="31" ToolTip="Change highlighter color"/>
+        <!--<Button x:Name="BottomColorButton" Grid.Column="5" HorizontalAlignment="Left" Margin="10,55,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="White" Height="32" Width="31"/>-->
 
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-            <Button Grid.Column="5" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Margin="341,42,0,0" Grid.Row="1"  VerticalAlignment="Top" Height="32" Width="32">
-                <Image Source="/Tools Images/color-wheel.png"/>
-            </Button>
-        </WrapPanel>-->
         <!--Panel.ZIndex="10"-->
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Black}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Black" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="White"  Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="53,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="DarkGray"  Height="18" Width="18" Click="ColorButton_Click"/>
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Gray}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightGray}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Gray" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="LightGray" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="82,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="SlateGray" Height="18" Width="18" Click="ColorButton_Click"/>
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.DarkRed}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Brown}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="DarkRed" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Brown" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="111,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Firebrick" Height="18" Width="18" Click="ColorButton_Click"/>
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Red}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightPink}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-
-
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Orange}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Gold}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Red" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="LightPink" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="139,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Crimson" Height="18" Width="18" Click="ColorButton_Click"/>
 
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Yellow}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightYellow}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Orange" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Tomato" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="166,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Gold" Height="18" Width="18" Click="ColorButton_Click"/>
 
 
-
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Green}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Lime}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Yellow" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Khaki" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="194,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="LightYellow" Height="18" Width="18"/>
 
 
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Turquoise}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightCyan}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Green" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="ForestGreen" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="223,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Lime" Height="18" Width="18" Click="ColorButton_Click"/>
 
 
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Indigo}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.LightSlateGray }" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Turquoise" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Teal" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="252,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="LightCyan" Height="18" Width="18" Click="ColorButton_Click"/>
 
 
 
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,13,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Purple}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,67,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.White}" Height="18" Width="18"/>
-        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,40,0,0" Grid.Row="1"  VerticalAlignment="Top" Style="{StaticResource CircleButtonStyle}" Tag="{x:Static Brushes.Lavender}" Height="18" Width="18"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Indigo" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="SlateBlue" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="277,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="LightSlateGray" Height="18" Width="18" Click="ColorButton_Click"/>
 
 
 
-        <Button Grid.Column="5" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Margin="330,0,0,0" Grid.Row="1"  VerticalAlignment="Center" Height="36" Width="36">
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,13,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Purple" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,67,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="MediumPurple" Height="18" Width="18" Click="ColorButton_Click"/>
+        <Button Grid.Column="5" HorizontalAlignment="Left" Margin="304,40,0,0" Grid.Row="1"  VerticalAlignment="Top" BorderBrush="Gray" Background="Lavender" Height="18" Width="18" Click="ColorButton_Click"/>
+
+
+
+        <!--<Button Grid.Column="5" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Margin="330,0,0,0" Grid.Row="1"  VerticalAlignment="Center" Height="36" Width="36" Click="ColorPickerControl_SelectedColorChanged">
             <Image Source="/Tools Images/rgb-color-wheel-spectrum-selector-picker-vector-44766143-removebg-preview.png" Height="36" Width="36"/>
-        </Button>
+        
+        </Button>-->
+
+
+        <xctk:ColorPicker x:Name="ColorPickerControl"
+              Grid.Row="1" Grid.Column="5"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Top"
+              Width="37"
+              Height="41"
+              SelectedColorChanged="ColorPickerControl_SelectedColorChanged" Margin="329,29,0,0"/>
+
 
         <!--Copilot Column-->
 
@@ -378,20 +1182,69 @@
 
 
         <!--Layer Column-->
-        <Button Grid.Column="7" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Center" Height="42" Margin="0,15,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32">
+        <Button Grid.Column="7" BorderThickness="0" Background="#f8f9fc" HorizontalAlignment="Left" Height="42" Margin="27,15,0,0" Grid.Row="1" VerticalAlignment="Top" Width="32">
             <Image Source="/Tools Images/layers.png"/>
         </Button>
-        <TextBlock Grid.Column="7" HorizontalAlignment="Center" Height="22" Margin="0,85,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Layers" VerticalAlignment="Top" Width="36"/>
+        <TextBlock Grid.Column="7" HorizontalAlignment="Left" Height="22" Margin="27,85,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Layers" VerticalAlignment="Top" Width="36"/>
         <Rectangle Grid.Column="7" HorizontalAlignment="Left" Height="110" Stroke="#f1f3f9" VerticalAlignment="Top" Width="2" Margin="0,37,0,0" Grid.RowSpan="2"/>
-        <Slider Grid.Column="5" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="30" Margin="290,10,0,0" Grid.Row="3" VerticalAlignment="Top" Width="192"/>
-        <Button Grid.Column="7" BorderThickness="0" Background="#f1f3f9" HorizontalAlignment="Left" Height="30" Margin="45,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="28">
-            <Image Source="/Tools Images/icons8-zoom-in-50.png"/>
-        </Button>
-        <Button Grid.Column="5" BorderThickness="0" Background="#f1f3f9" HorizontalAlignment="Left" Height="30" Margin="252,0,0,0" Grid.Row="3" VerticalAlignment="Center" Width="26">
-            <Image Source="/Tools Images/icons8-zoom-out-50.png"/>
-        </Button>
 
+        <!--Style="{StaticResource ColoredSliderStyle}"-->
+        <!--<Rectangle x:Name="Rect1"  Fill="White" HorizontalAlignment="Left" Height="211" Margin="15,10,0,0" Grid.Row="2" Grid.ColumnSpan="2" Stroke="Black" VerticalAlignment="Center" Width="40" Visibility="collapsed"/>
+
+        <Slider x:Name="PencilThickness" HorizontalAlignment="Left" Height="28"
+                Margin="-58,201,0,0" Grid.Row="2" VerticalAlignment="Top" Width="193" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2"  ValueChanged="PenThickness_ValueChanged" Visibility="collapsed" Minimum="1" Maximum="50">
+            <Slider.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="269.817"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Slider.RenderTransform>
+        </Slider>-->
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="15,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <!-- Rectangle as background -->
+            <Rectangle x:Name="Rect1" 
+               Fill="White"
+               Stroke="Black"
+               Width="40"
+               Height="211"
+                       Visibility="Collapsed"
+               VerticalAlignment="Center" Margin="0,0,75,0"/>
+
+            <!-- Slider with your original transform but responsive positioning -->
+            <Slider x:Name="PencilThickness"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Height="28"
+            Width="193"
+            Minimum="1"
+            Maximum="50"
+            Margin="-68,0,0,0"
+            ValueChanged="PenThickness_ValueChanged"
+                    Visibility="Collapsed"
+            RenderTransformOrigin="0.5,0.5">
+                <Slider.RenderTransform>
+                    <RotateTransform Angle="269.817"/>
+                </Slider.RenderTransform>
+            </Slider>
+
+            <Slider x:Name="EraserThicknessSlider" HorizontalAlignment="Left" Height="28"
+Margin="-68,0,0,0" VerticalAlignment="Center" Width="193" RenderTransformOrigin="0.5,0.5"  ValueChanged="EraserThicknessSlider_ValueChanged" Visibility="Collapsed" Minimum="1" Maximum="50">
+                <Slider.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="269.817"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Slider.RenderTransform>
+            </Slider>
+        </Grid>
 
 
     </Grid>
+
+
 </Window>
