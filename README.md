@@ -26,7 +26,7 @@ A fully-functional and modern remake of Microsoft Paint built with WPF (Windows 
 ## 📸 Screenshots
 
 <!-- Add screenshots here -->
-[Main UI]![image](https://github.com/user-attachments/assets/3cb749e1-1549-4c82-a45c-7974afe174ae)
+[Main UI]![image]![image](https://github.com/user-attachments/assets/cca6e532-c7b3-403f-b98b-79a9853453d2)
 
 ## 🔧 Getting Started
 
