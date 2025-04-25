@@ -12,35 +12,89 @@
     <None Remove="Images\47182-08fba5488a362df6a81736262bb706a5-removebg-preview.png" />
     <None Remove="Images\arrow-down-sign-to-navigate.png" />
     <None Remove="Images\arrow.png" />
+    <None Remove="Images\bin.png" />
+    <None Remove="Images\copy-icon.png" />
+    <None Remove="Images\cut-icon.png" />
     <None Remove="Images\icons8-background-remover-48.png" />
+    <None Remove="Images\icons8-brush-50.png" />
+    <None Remove="Images\icons8-calligraphy-brush-50.png" />
+    <None Remove="Images\icons8-circle-50.png" />
+    <None Remove="Images\icons8-crayon-48.png" />
     <None Remove="Images\icons8-crop-48.png" />
     <None Remove="Images\icons8-flip-48.png" />
+    <None Remove="Images\icons8-fountain-pen-48.png" />
+    <None Remove="Images\icons8-line-50.png" />
     <None Remove="Images\icons8-microsoft-paint-32.ico" />
+    <None Remove="Images\icons8-rectangle-48.png" />
+    <None Remove="Images\icons8-rectangle-96.png" />
     <None Remove="Images\icons8-selection-67.png" />
+    <None Remove="Images\icons8-square-50.png" />
+    <None Remove="Images\paste-icon.png" />
     <None Remove="Images\redoArrow.PNG" />
     <None Remove="Images\resize.png" />
     <None Remove="Images\saveas_5165.png" />
+    <None Remove="Images\select.png" />
     <None Remove="Images\selection-symbol-for-interface-of-a-square-of-broken-line.png" />
     <None Remove="Images\share.png" />
+    <None Remove="Images\tool.png" />
     <None Remove="Tools Images\color-picker.png" />
+    <None Remove="Tools Images\color-wheel.png" />
     <None Remove="Tools Images\eraser.png" />
+    <None Remove="Tools Images\folder.png" />
     <None Remove="Tools Images\font-symbol-of-letter-a.png" />
     <None Remove="Tools Images\icons8-a-48.png" />
     <None Remove="Tools Images\icons8-brush-48.png" />
+    <None Remove="Tools Images\icons8-exit-50.png" />
     <None Remove="Tools Images\icons8-fill-color-48.png" />
+    <None Remove="Tools Images\icons8-flip-horizontal-50.png" />
+    <None Remove="Tools Images\icons8-flip-vertical-50.png" />
     <None Remove="Tools Images\icons8-microsoft-copilot-48.png" />
+    <None Remove="Tools Images\icons8-new-file-50.png" />
+    <None Remove="Tools Images\icons8-rotate-180-50.png" />
+    <None Remove="Tools Images\icons8-rotate-left-50.png" />
+    <None Remove="Tools Images\icons8-rotate-right-50.png" />
+    <None Remove="Tools Images\icons8-save-as-50.png" />
     <None Remove="Tools Images\icons8-shapes-24.png" />
+    <None Remove="Tools Images\icons8-zoom-in-50.png" />
+    <None Remove="Tools Images\icons8-zoom-out-50.png" />
     <None Remove="Tools Images\layers.png" />
     <None Remove="Tools Images\paint-brush.png" />
     <None Remove="Tools Images\paint-bucket.png" />
     <None Remove="Tools Images\pencil.png" />
+    <None Remove="Tools Images\rgb-color-wheel-spectrum-selector-picker-vector-44766143-removebg-preview.png" />
     <None Remove="Tools Images\shapes.png" />
     <None Remove="Tools Images\zoom.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\icons8-brush-50.png" />
+    <Resource Include="Images\icons8-calligraphy-brush-50.png" />
+    <Resource Include="Images\icons8-circle-50.png" />
+    <Resource Include="Images\icons8-crayon-48.png" />
+    <Resource Include="Images\icons8-fountain-pen-48.png" />
+    <Resource Include="Images\icons8-line-50.png" />
+    <Resource Include="Images\icons8-rectangle-48.png" />
+    <Resource Include="Images\icons8-rectangle-96.png" />
+    <Resource Include="Images\icons8-square-50.png" />
+    <Resource Include="Tools Images\icons8-rotate-180-50.png" />
+    <Resource Include="Tools Images\icons8-rotate-left-50.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\bin.png" />
+    <Resource Include="Images\copy-icon.png" />
+    <Resource Include="Images\cut-icon.png" />
+    <Resource Include="Images\paste-icon.png" />
+    <Resource Include="Images\select.png" />
+    <Resource Include="Images\tool.png" />
     <Resource Include="Tools Images\color-picker.png" />
+    <Resource Include="Tools Images\color-wheel.png" />
     <Resource Include="Tools Images\eraser.png" />
+    <Resource Include="Tools Images\folder.png" />
     <Resource Include="Tools Images\font-symbol-of-letter-a.png" />
     <Resource Include="Tools Images\icons8-a-48.png" />
   </ItemGroup>
@@ -60,13 +114,22 @@
     <Resource Include="Images\selection-symbol-for-interface-of-a-square-of-broken-line.png" />
     <Resource Include="Images\share.png" />
     <Resource Include="Tools Images\icons8-brush-48.png" />
+    <Resource Include="Tools Images\icons8-exit-50.png" />
     <Resource Include="Tools Images\icons8-fill-color-48.png" />
+    <Resource Include="Tools Images\icons8-flip-horizontal-50.png" />
+    <Resource Include="Tools Images\icons8-flip-vertical-50.png" />
     <Resource Include="Tools Images\icons8-microsoft-copilot-48.png" />
+    <Resource Include="Tools Images\icons8-new-file-50.png" />
+    <Resource Include="Tools Images\icons8-rotate-right-50.png" />
+    <Resource Include="Tools Images\icons8-save-as-50.png" />
     <Resource Include="Tools Images\icons8-shapes-24.png" />
+    <Resource Include="Tools Images\icons8-zoom-in-50.png" />
+    <Resource Include="Tools Images\icons8-zoom-out-50.png" />
     <Resource Include="Tools Images\layers.png" />
     <Resource Include="Tools Images\paint-brush.png" />
     <Resource Include="Tools Images\paint-bucket.png" />
     <Resource Include="Tools Images\pencil.png" />
+    <Resource Include="Tools Images\rgb-color-wheel-spectrum-selector-picker-vector-44766143-removebg-preview.png" />
     <Resource Include="Tools Images\shapes.png" />
     <Resource Include="Tools Images\zoom.png" />
   </ItemGroup>
